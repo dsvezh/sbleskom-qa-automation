@@ -1,8 +1,8 @@
-package ru.sokolov.web.tests;
+package ru.sbleskom.web.tests;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
-import ru.sokolov.helpers.Attach;
+import ru.sbleskom.helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +19,7 @@ public class TestBase {
         SelenideLogger.addListener("allure", new AllureSelenide()
                 .screenshots(true)
                 .savePageSource(true));
-        Configuration.baseUrl = System.getProperty("baseUrl", "https://sokolov.ru");
+        Configuration.baseUrl = System.getProperty("baseUrl", "https://sbleskom.ru");
         Configuration.browserSize = System.getProperty("browserSize", "1920x1080");
         Configuration.browserVersion = System.getProperty("browserVersion", "");
         Configuration.pageLoadStrategy = "eager";

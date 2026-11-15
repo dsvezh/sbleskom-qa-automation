@@ -3,7 +3,7 @@ plugins {
     id 'io.qameta.allure' version '4.3.0'
 }
 
-group = 'ru.sokolov'
+group = 'ru.sbleskom'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -42,7 +42,7 @@ test {
     finalizedBy tasks.named('allureReport')
     systemProperty 'file.encoding', 'UTF-8'
     systemProperty 'selenide.browser', System.getProperty('selenide.browser', 'chrome')
-    systemProperty 'baseUrl', System.getProperty('baseUrl', 'https://sokolov.ru')
+    systemProperty 'baseUrl', System.getProperty('baseUrl', 'https://sbleskom.ru')
     ['remoteUrl', 'videoUrl', 'browserVersion', 'browserSize'].each { propertyName ->
         if (System.getProperty(propertyName) != null) {
             systemProperty propertyName, System.getProperty(propertyName)
