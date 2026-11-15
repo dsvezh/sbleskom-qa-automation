@@ -1,1 +1,1 @@
-# sokolov-qa-automation-
+# sokolov-qa-automation
