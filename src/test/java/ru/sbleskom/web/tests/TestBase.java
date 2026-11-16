@@ -20,6 +20,7 @@ public class TestBase {
                 .screenshots(true)
                 .savePageSource(true));
         Configuration.baseUrl = System.getProperty("baseUrl", "https://sbleskom.ru");
+        Configuration.browser = System.getProperty("selenide.browser", "chrome");
         Configuration.browserSize = System.getProperty("browserSize", "1920x1080");
         Configuration.browserVersion = System.getProperty("browserVersion", "");
         Configuration.pageLoadStrategy = "eager";
