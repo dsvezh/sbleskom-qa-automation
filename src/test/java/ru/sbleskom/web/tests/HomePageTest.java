@@ -18,6 +18,10 @@ import static io.qameta.allure.SeverityLevel.CRITICAL;
 @Feature("Главная страница")
 @DisplayName("Главная страница")
 public class HomePageTest extends TestBase {
+    private final HomePage homePage = new HomePage();
+    private final CatalogPage catalogPage = new CatalogPage();
+    private final ShopsPage shopsPage = new ShopsPage();
+    private final BlogPage blogPage = new BlogPage();
 
     @Test
     @Story("Наличие основных разделов главной страницы")
@@ -25,8 +29,7 @@ public class HomePageTest extends TestBase {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void mainSectionsShouldBeVisible() {
-        new HomePage()
-                .openHomePage()
+        homePage.openHomePage()
                 .shouldHaveHeading("Серебряные украшения SBLESKOM")
                 .shouldHaveMenuSections("Каталог", "Новинки", "Магазины", "Блог SBLESKOM")
                 .shouldHaveSections("Новинки", "НОВОСТИ", "Каталог", "Для особых случаев", "КОМАНДА");
@@ -38,12 +41,10 @@ public class HomePageTest extends TestBase {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void catalogShouldOpenFromHomePage() {
-        new HomePage()
-                .openHomePage()
+        homePage.openHomePage()
                 .openMenuSection("Каталог");
 
-        new CatalogPage()
-                .shouldBeOpened("/collection/all", "Каталог");
+        catalogPage.shouldBeOpened("/collection/all", "Каталог");
     }
 
     @Test
@@ -52,12 +53,10 @@ public class HomePageTest extends TestBase {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void newArrivalsShouldOpenFromHomePage() {
-        new HomePage()
-                .openHomePage()
+        homePage.openHomePage()
                 .openMenuSection("Новинки");
 
-        new CatalogPage()
-                .shouldBeOpened("/collection/novinki-2", "Новинки");
+        catalogPage.shouldBeOpened("/collection/novinki-2", "Новинки");
     }
 
     @Test
@@ -66,12 +65,10 @@ public class HomePageTest extends TestBase {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void shopsShouldOpenFromHomePage() {
-        new HomePage()
-                .openHomePage()
+        homePage.openHomePage()
                 .openMenuSection("Магазины");
 
-        new ShopsPage()
-                .shouldBeOpened("/page/address", "Магазины");
+        shopsPage.shouldBeOpened("/page/address", "Магазины");
     }
 
     @Test
@@ -80,11 +77,9 @@ public class HomePageTest extends TestBase {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void blogShouldOpenFromHomePage() {
-        new HomePage()
-                .openHomePage()
+        homePage.openHomePage()
                 .openMenuSection("Блог SBLESKOM");
 
-        new BlogPage()
-                .shouldBeOpened("/page/blog-index", "Блог SBLESKOM");
+        blogPage.shouldBeOpened("/page/blog-index", "Блог SBLESKOM");
     }
 }
