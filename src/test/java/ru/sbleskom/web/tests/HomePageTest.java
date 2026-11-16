@@ -26,7 +26,7 @@ public class HomePageTest extends TestBase {
     @Severity(CRITICAL)
     void mainSectionsShouldBeVisible() {
         new HomePage()
-                .openPage()
+                .openHomePage()
                 .shouldHaveHeading("Серебряные украшения SBLESKOM")
                 .shouldHaveMenuSections("Каталог", "Новинки", "Магазины", "Блог SBLESKOM")
                 .shouldHaveSections("Новинки", "НОВОСТИ", "Каталог", "Для особых случаев", "КОМАНДА");
@@ -39,7 +39,7 @@ public class HomePageTest extends TestBase {
     @Severity(CRITICAL)
     void catalogShouldOpenFromHomePage() {
         new HomePage()
-                .openPage()
+                .openHomePage()
                 .openMenuSection("Каталог");
 
         new CatalogPage()
@@ -53,7 +53,7 @@ public class HomePageTest extends TestBase {
     @Severity(CRITICAL)
     void newArrivalsShouldOpenFromHomePage() {
         new HomePage()
-                .openPage()
+                .openHomePage()
                 .openMenuSection("Новинки");
 
         new CatalogPage()
@@ -67,7 +67,7 @@ public class HomePageTest extends TestBase {
     @Severity(CRITICAL)
     void shopsShouldOpenFromHomePage() {
         new HomePage()
-                .openPage()
+                .openHomePage()
                 .openMenuSection("Магазины");
 
         new ShopsPage()
@@ -81,7 +81,7 @@ public class HomePageTest extends TestBase {
     @Severity(CRITICAL)
     void blogShouldOpenFromHomePage() {
         new HomePage()
-                .openPage()
+                .openHomePage()
                 .openMenuSection("Блог SBLESKOM");
 
         new BlogPage()

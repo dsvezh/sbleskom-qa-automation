@@ -15,7 +15,7 @@ public class HomePage {
     private final ElementsCollection sectionTitles = $("main").$$(".simple-title__title a, .centered-title__title a");
 
     @Step("Открыть главную страницу")
-    public HomePage openPage() {
+    public HomePage openHomePage() {
         open("/");
         return this;
     }
