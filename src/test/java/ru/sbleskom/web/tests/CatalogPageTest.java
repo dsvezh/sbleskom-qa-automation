@@ -22,6 +22,38 @@ public class CatalogPageTest extends TestBase {
     private final ProductPage productPage = new ProductPage();
 
     @Test
+    @Story("Добавление товара в корзину из каталога")
+    @DisplayName("Первый товар каталога добавляется в корзину с параметрами по умолчанию")
+    @Owner("d.svezhov")
+    @Severity(CRITICAL)
+    void firstProductShouldBeAddedToCart() {
+        catalogPage.openCatalogPage()
+                .shouldBeOpened("/collection/all", "Каталог");
+        String expectedTitle = catalogPage.getFirstProductTitle();
+        String expectedProductId = catalogPage.getFirstProductId();
+
+        catalogPage.addFirstProductToCart()
+                .shouldHaveCartOpened("Корзина")
+                .shouldHaveProductInCart(expectedProductId, expectedTitle, 1, 1);
+    }
+
+    @Test
+    @Story("Переход в подкатегорию из каталога")
+    @DisplayName("Из каталога открывается выбранная подкатегория с товарами")
+    @Owner("d.svezhov")
+    @Severity(CRITICAL)
+    void subcategoryShouldOpenFromCatalog() {
+        catalogPage.openCatalogPage()
+                .openSubcategory("Кольца", "Обручальные кольца")
+                .shouldBeOpened("/collection/svadebnye-koltsa", "Обручальные кольца")
+                .captureInitialProducts()
+                .shouldShowProducts()
+                .shouldShowProductTitles()
+                .shouldShowProductMedia()
+                .shouldShowProductPrices("^[1-9][0-9]* руб$");
+    }
+
+    @Test
     @Story("Подгрузка товаров при прокрутке каталога")
     @DisplayName("Прокрутка добавляет новые товары, сохраняет прежние и не дублирует ID")
     @Owner("d.svezhov")
@@ -73,6 +105,7 @@ public class CatalogPageTest extends TestBase {
     @Severity(CRITICAL)
     void catalogShouldShowProducts() {
         catalogPage.openCatalogPage()
+                .captureInitialProducts()
                 .shouldShowProducts()
                 .shouldShowProductTitles()
                 .shouldShowProductMedia()

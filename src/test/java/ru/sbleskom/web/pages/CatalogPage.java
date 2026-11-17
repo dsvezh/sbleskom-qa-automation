@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import static com.codeborne.selenide.Condition.exactText;
+import static com.codeborne.selenide.Condition.enabled;
+import static com.codeborne.selenide.Condition.hidden;
 import static com.codeborne.selenide.Condition.image;
 import static com.codeborne.selenide.Condition.match;
 import static com.codeborne.selenide.Condition.matchText;
@@ -25,8 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CatalogPage {
+    private final SelenideElement pageBody = $("body");
     private final SelenideElement heading = $(".catalog__title h1");
     private final SelenideElement footerBottom = $(".footer_last");
+    private final SelenideElement sizePopup = $("#add-in-cat__modal-popup");
+    private final SelenideElement defaultSizeSelect = sizePopup.$("select.option-values");
+    private final SelenideElement popupAddToCartButton = sizePopup.$("[data-item-add]");
+    private final SelenideElement cartLink = $(".header__controls-item[href='/cart_items']");
+    private final SelenideElement cartCounter = cartLink.$(".cart-counter");
+    private final ElementsCollection categoryItems = $(".catalog__menu").$$("label.catalog__menu-item");
+    private final ElementsCollection subcategoryLinks = $(".catalog__menu").$$("a.catalog__menu-submenu-item");
     private final ElementsCollection products = $(".catalog__list").$$(".catalog__item[data-product-id]");
     private final ElementsCollection productButtons = $(".catalog__list")
             .$$(".catalog__item .js-card-add-to-cart[data-product-id]");
@@ -34,6 +44,8 @@ public class CatalogPage {
     private final String productMediaArea = ".card-images__box .slider__by-hover-item";
     private final String productMedia = ".card-images__box img, .catalog__item-images video";
     private final String productPrice = ".catalog__item-price";
+    private final String categoryToggleImage = "img";
+    private final String productLink = "a";
     private final WebElementCondition loadedVideo = match("видео с загруженным кадром без ошибок", element -> {
         String readyState = element.getDomProperty("readyState");
         String videoWidth = element.getDomProperty("videoWidth");
@@ -47,8 +59,18 @@ public class CatalogPage {
 
     @Step("Открыть каталог")
     public CatalogPage openCatalogPage() {
+        initialProducts = null;
         open("/collection/all");
-        initialProducts = products.shouldHave(sizeGreaterThan(0)).snapshot();
+        return this;
+    }
+
+    @Step("Открыть подкатегорию «{subcategoryName}» раздела «{categoryName}» в каталоге")
+    public CatalogPage openSubcategory(String categoryName, String subcategoryName) {
+        SelenideElement category = categoryItems.findBy(exactText(categoryName)).shouldBe(visible);
+        category.hover();
+        category.$(categoryToggleImage).shouldBe(visible).click();
+        subcategoryLinks.findBy(exactText(subcategoryName)).shouldBe(visible).click();
+        initialProducts = null;
         return this;
     }
 
@@ -59,7 +81,27 @@ public class CatalogPage {
 
     @Step("Получить адрес первого товара каталога")
     public String getFirstProductUrl() {
-        return products.first().$(productTitle).closest("a").getAttribute("href");
+        return products.first().$(productTitle).closest(productLink).getAttribute("href");
+    }
+
+    @Step("Получить ID первого товара каталога")
+    public String getFirstProductId() {
+        return productButtons.first().getAttribute("data-product-id");
+    }
+
+    @Step("Добавить первый товар каталога с параметрами по умолчанию и открыть корзину")
+    public CartPage addFirstProductToCart() {
+        productButtons.first().shouldBe(visible, enabled).click();
+        pageBody.shouldBe(match("открылось уточняющее окно или товар добавлен в корзину",
+                element -> sizePopup.isDisplayed() || cartCounter.has(exactText("1"))));
+        if (sizePopup.isDisplayed()) {
+            defaultSizeSelect.shouldBe(visible, enabled);
+            popupAddToCartButton.shouldBe(visible, enabled).click();
+        }
+        sizePopup.shouldBe(hidden);
+        cartCounter.shouldHave(exactText("1"));
+        cartLink.shouldBe(visible).click();
+        return new CartPage();
     }
 
     @Step("Сохранить ID загруженных товаров каталога")
@@ -98,12 +140,19 @@ public class CatalogPage {
 
     @Step("Открыть первый товар нажатием на изображение или видео")
     public void openFirstProductByMedia() {
-        products.first().$$(productMediaArea).findBy(visible).click();
+        SelenideElement firstProduct = products.first().shouldBe(visible);
+        String mediaSelector = firstProduct.$(productMediaArea).exists() ? productMediaArea : productMedia;
+        firstProduct.$$(mediaSelector).findBy(visible).click();
+    }
+
+    @Step("Зафиксировать первую загруженную порцию товаров каталога")
+    public CatalogPage captureInitialProducts() {
+        initialProducts = products.shouldHave(sizeGreaterThan(0)).snapshot();
+        return this;
     }
 
     @Step("Проверить наличие товаров в каталоге")
     public CatalogPage shouldShowProducts() {
-        initialProducts.shouldHave(sizeGreaterThan(0));
         for (SelenideElement product : initialProducts) {
             product.shouldBe(visible);
         }
