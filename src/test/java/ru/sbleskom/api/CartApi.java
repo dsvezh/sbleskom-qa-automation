@@ -4,6 +4,7 @@ import io.restassured.filter.cookie.CookieFilter;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
+import ru.sbleskom.api.models.AddToCartRequest;
 import ru.sbleskom.api.specs.ApiSpecs;
 
 import java.net.URI;
@@ -34,9 +35,13 @@ public class CartApi {
     }
 
     public ValidatableResponse addItem(long variantId, int quantity) {
+        return addItem(new AddToCartRequest(variantId, quantity));
+    }
+
+    public ValidatableResponse addItem(AddToCartRequest item) {
         Response response = mutationRequest()
                 .contentType(URLENC)
-                .formParam("variant_ids[" + variantId + "]", quantity)
+                .formParam("variant_ids[" + item.getVariantId() + "]", item.getQuantity())
                 .formParam("lang", "")
                 .post(CART_JSON_PATH);
         return validate(response);
