@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": ["items_count", "total_price", "order_lines"],
+  "properties": {
+    "items_count": {"type": "integer"},
+    "total_price": {"type": "number"},
+    "order_lines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["product_id", "variant_id", "quantity"],
+        "properties": {
+          "product_id": {"type": "integer"},
+          "variant_id": {"type": "integer"},
+          "quantity": {"type": "integer"}
+        }
+      }
+    }
+  }
+}

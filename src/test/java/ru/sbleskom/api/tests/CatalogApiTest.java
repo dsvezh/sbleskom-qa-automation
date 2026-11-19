@@ -5,14 +5,11 @@ import io.qameta.allure.Feature;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import ru.sbleskom.api.CatalogApi;
-import ru.sbleskom.api.models.CollectionResponse;
-import ru.sbleskom.api.models.Product;
+import ru.sbleskom.api.ApiClient;
+import ru.sbleskom.api.models.catalog.CollectionResponse;
+import ru.sbleskom.api.models.catalog.Product;
 
 import static io.qameta.allure.Allure.step;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,23 +18,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("api")
 @DisplayName("API каталога")
 class CatalogApiTest {
+    private final ApiClient api = new ApiClient();
+
     @Test
     @DisplayName("GET возвращает товары коллекции «Каталог»")
     void collectionShouldContainProducts() {
-        CollectionResponse collection = step("Запросить каталог и убедиться, что в ответе есть товары",
-                () -> new CatalogApi().getCollection("all")
-                        .statusCode(200)
-                        .body("status", equalTo("ok"))
-                        .body("products", hasSize(greaterThan(0)))
-                        .extract().as(CollectionResponse.class));
+        CollectionResponse collection = step("Запросить коллекцию «Каталог»",
+                () -> api.catalog.getCollection("all"));
 
         step("Проверить общее число товаров, ID и название первого товара", () -> {
-            Product firstProduct = collection.getProducts().get(0);
+            assertTrue(!collection.products().isEmpty(), "Коллекция «Каталог» должна содержать товары");
+            Product firstProduct = collection.products().get(0);
             assertAll(
-                    () -> assertTrue(collection.getCount() >= collection.getProducts().size(),
+                    () -> assertTrue(collection.count() >= collection.products().size(),
                             "Общее число товаров меньше размера полученной страницы"),
-                    () -> assertTrue(firstProduct.getId() > 0, "У товара должен быть положительный ID"),
-                    () -> assertTrue(firstProduct.getTitle() != null && !firstProduct.getTitle().isBlank(),
+                    () -> assertTrue(firstProduct.id() > 0, "У товара должен быть положительный ID"),
+                    () -> assertTrue(!firstProduct.title().isBlank(),
                             "У товара должно быть название")
             );
         });

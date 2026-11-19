@@ -1,23 +1,17 @@
 package ru.sbleskom.api.specs;
 
 import io.qameta.allure.restassured.AllureRestAssured;
-import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import io.restassured.specification.ResponseSpecification;
 
 import static io.restassured.http.ContentType.JSON;
 
-public final class ApiSpecs {
+public final class BaseSpec {
     private static final String BASE_URI = System.getProperty("apiBaseUrl",
             System.getProperty("baseUrl", "https://sbleskom.ru"));
 
-    static {
-        RestAssured.baseURI = BASE_URI;
-    }
-
-    private ApiSpecs() {
+    private BaseSpec() {
     }
 
     public static String baseUri() {
@@ -34,9 +28,9 @@ public final class ApiSpecs {
                 .build();
     }
 
-    public static ResponseSpecification jsonResponse() {
+    public static ResponseSpecBuilder successfulJsonResponse() {
         return new ResponseSpecBuilder()
-                .expectContentType(JSON)
-                .build();
+                .expectStatusCode(200)
+                .expectContentType(JSON);
     }
 }

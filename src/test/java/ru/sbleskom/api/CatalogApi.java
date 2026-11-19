@@ -1,21 +1,22 @@
 package ru.sbleskom.api;
 
 import io.qameta.allure.Step;
-import io.restassured.response.ValidatableResponse;
+import ru.sbleskom.api.models.catalog.CollectionResponse;
 
 import static io.restassured.RestAssured.given;
-import static ru.sbleskom.api.specs.ApiSpecs.jsonResponse;
-import static ru.sbleskom.api.specs.ApiSpecs.request;
+import static ru.sbleskom.api.specs.BaseSpec.request;
+import static ru.sbleskom.api.specs.catalog.CatalogSpec.SUCCESSFUL_COLLECTION_RESPONSE;
 
 public class CatalogApi {
 
     @Step("Получение коллекции GET /collection/{slug}.json")
-    public ValidatableResponse getCollection(String slug) {
+    public CollectionResponse getCollection(String slug) {
         return given(request())
                 .pathParam("slug", slug)
                 .when()
                 .get("/collection/{slug}.json")
                 .then()
-                .spec(jsonResponse());
+                .spec(SUCCESSFUL_COLLECTION_RESPONSE)
+                .extract().as(CollectionResponse.class);
     }
 }

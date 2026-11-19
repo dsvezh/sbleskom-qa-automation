@@ -1,23 +1,25 @@
 package ru.sbleskom.api.fixtures;
 
 import ru.sbleskom.api.CatalogApi;
-import ru.sbleskom.api.models.CollectionResponse;
-import ru.sbleskom.api.models.Product;
-import ru.sbleskom.api.models.ProductVariant;
+import ru.sbleskom.api.models.catalog.CollectionResponse;
+import ru.sbleskom.api.models.catalog.Product;
+import ru.sbleskom.api.models.catalog.ProductVariant;
 
 public class ProductFixture {
-    private final CatalogApi catalogApi = new CatalogApi();
+    private final CatalogApi catalogApi;
+
+    public ProductFixture(CatalogApi catalogApi) {
+        this.catalogApi = catalogApi;
+    }
 
     public ProductVariant findAvailableVariant(String collectionSlug) {
-        CollectionResponse collection = catalogApi.getCollection(collectionSlug)
-                .statusCode(200)
-                .extract().as(CollectionResponse.class);
+        CollectionResponse collection = catalogApi.getCollection(collectionSlug);
 
-        return collection.getProducts().stream()
-                .filter(Product::isAvailable)
-                .flatMap(product -> product.getVariants().stream())
-                .filter(ProductVariant::isAvailable)
-                .filter(variant -> variant.getQuantity() != null && variant.getQuantity() > 0)
+        return collection.products().stream()
+                .filter(Product::available)
+                .flatMap(product -> product.variants().stream())
+                .filter(ProductVariant::available)
+                .filter(variant -> variant.quantity() != null && variant.quantity() > 0)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(
                         "No in-stock product variant in collection: " + collectionSlug));

@@ -1,34 +1,27 @@
 package ru.sbleskom.api.fixtures;
 
 import ru.sbleskom.api.CartApi;
-import ru.sbleskom.api.models.AddToCartRequest;
-import ru.sbleskom.api.models.CartItem;
-import ru.sbleskom.api.models.CartResponse;
+import ru.sbleskom.api.models.cart.AddToCartRequest;
+import ru.sbleskom.api.models.cart.CartItem;
+import ru.sbleskom.api.models.cart.CartResponse;
 
 public class CartFixture implements AutoCloseable {
-    private final CartApi cartApi = new CartApi();
+    private final CartApi cartApi;
 
-    public CartFixture() {
-        cartApi.getCart().statusCode(200);
-    }
-
-    public CartApi api() {
-        return cartApi;
+    public CartFixture(CartApi cartApi) {
+        this.cartApi = cartApi;
+        cartApi.getCart();
     }
 
     public CartResponse addItem(AddToCartRequest item) {
-        return cartApi.addItem(item)
-                .statusCode(200)
-                .extract().as(CartResponse.class);
+        return cartApi.addItem(item);
     }
 
     @Override
     public void close() {
-        CartResponse cart = cartApi.getCartV2()
-                .statusCode(200)
-                .extract().as(CartResponse.class);
-        for (CartItem item : cart.getItems()) {
-            cartApi.deleteItem(item.getVariantId()).statusCode(200);
+        CartResponse cart = cartApi.getCartV2();
+        for (CartItem item : cart.items()) {
+            cartApi.deleteItem(item.variantId());
         }
     }
 }
