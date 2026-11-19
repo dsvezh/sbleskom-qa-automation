@@ -6,6 +6,7 @@ import io.qameta.allure.Owner;
 import io.qameta.allure.Severity;
 import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import ru.sbleskom.web.pages.BlogPage;
 import ru.sbleskom.web.pages.CatalogPage;
@@ -16,6 +17,7 @@ import static io.qameta.allure.SeverityLevel.CRITICAL;
 
 @Epic("SBLESKOM")
 @Feature("Главная страница")
+@Tag("ui")
 @DisplayName("Главная страница")
 public class HomePageTest extends TestBase {
     private final HomePage homePage = new HomePage();

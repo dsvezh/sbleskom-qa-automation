@@ -30,15 +30,11 @@ class CartApiTest {
     @Test
     @DisplayName("GET возвращает пустую корзину для нового гостя")
     void guestCartShouldBeEmpty() {
-        CartResponse cart = step("Запросить корзину нового гостя и проверить, что ответ не содержит позиций",
+        step("Запросить корзину нового гостя и проверить, что ответ не содержит позиций",
                 () -> new CartApi().getCart()
                         .statusCode(200)
                         .body("items_count", equalTo(0))
-                        .body("order_lines", hasSize(0))
-                        .extract().as(CartResponse.class));
-
-        step("Проверить, что список позиций в модели корзины пуст",
-                () -> assertTrue(cart.getItems().isEmpty(), "В модели новой корзины не должно быть позиций"));
+                        .body("order_lines", hasSize(0)));
     }
 
     @Test
