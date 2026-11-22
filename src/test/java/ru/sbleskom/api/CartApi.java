@@ -12,7 +12,7 @@ import ru.sbleskom.api.models.cart.LegacyCartResponseModel;
 import java.net.URI;
 
 import static io.restassured.http.ContentType.URLENC;
-import static ru.sbleskom.api.specs.BaseSpec.baseUri;
+import static ru.sbleskom.api.specs.BaseSpec.BASE_URI;
 import static ru.sbleskom.api.specs.cart.CartSpec.SUCCESSFUL_CART_RESPONSE;
 import static ru.sbleskom.api.specs.cart.CartSpec.SUCCESSFUL_LEGACY_CART_RESPONSE;
 import static ru.sbleskom.api.specs.cart.CartSpec.cartMutationRequest;
@@ -37,7 +37,7 @@ public class CartApi {
     };
 
     public CartApi() {
-        URI uri = URI.create(baseUri());
+        URI uri = URI.create(BASE_URI);
         origin = uri.getScheme() + "://" + uri.getRawAuthority();
     }
 
