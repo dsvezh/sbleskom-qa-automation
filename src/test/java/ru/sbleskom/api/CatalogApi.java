@@ -17,6 +17,7 @@ public class CatalogApi {
                 .get("/collection/{slug}.json")
                 .then()
                 .spec(SUCCESSFUL_COLLECTION_RESPONSE)
-                .extract().as(CollectionResponseModel.class);
+                .extract()
+                .as(CollectionResponseModel.class);
     }
 }

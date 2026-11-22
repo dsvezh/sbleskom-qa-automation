@@ -1,10 +1,10 @@
 package ru.sbleskom.api;
 
 import io.qameta.allure.Step;
+import io.restassured.filter.Filter;
 import io.restassured.filter.cookie.CookieFilter;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import io.restassured.specification.ResponseSpecification;
 import ru.sbleskom.api.models.cart.AddToCartRequestModel;
 import ru.sbleskom.api.models.cart.CartResponseModel;
 import ru.sbleskom.api.models.cart.LegacyCartResponseModel;
@@ -27,6 +27,14 @@ public class CartApi {
     private final CookieFilter cookies = new CookieFilter();
     private final String origin;
     private String csrfToken;
+    private final Filter captureCsrfToken = (request, responseSpec, context) -> {
+        Response response = context.next(request, responseSpec);
+        String updatedCsrfToken = response.getCookie(CSRF_COOKIE);
+        if (updatedCsrfToken != null) {
+            csrfToken = updatedCsrfToken;
+        }
+        return response;
+    };
 
     public CartApi() {
         URI uri = URI.create(baseUri());
@@ -35,54 +43,59 @@ public class CartApi {
 
     @Step("Получение корзины GET /cart_items.json")
     public LegacyCartResponseModel getCart() {
-        Response response = cartRequest(cookies)
+        return cartRequest(cookies)
+                .filter(captureCsrfToken)
                 .when()
-                .get(CART_JSON_PATH);
-        return readResponse(response, SUCCESSFUL_LEGACY_CART_RESPONSE, LegacyCartResponseModel.class);
+                .get(CART_JSON_PATH)
+                .then()
+                .spec(SUCCESSFUL_LEGACY_CART_RESPONSE)
+                .extract()
+                .as(LegacyCartResponseModel.class);
     }
 
     @Step("Получение корзины GET /cart_items/v2.json")
     public CartResponseModel getCartV2() {
-        Response response = cartRequest(cookies)
+        return cartRequest(cookies)
+                .filter(captureCsrfToken)
                 .when()
-                .get(CART_PATH + "/v2.json");
-        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponseModel.class);
+                .get(CART_PATH + "/v2.json")
+                .then()
+                .spec(SUCCESSFUL_CART_RESPONSE)
+                .extract()
+                .as(CartResponseModel.class);
     }
 
     @Step("Добавление товара в корзину POST /cart_items.json")
     public CartResponseModel addItem(AddToCartRequestModel item) {
-        Response response = mutationRequest()
+        return mutationRequest()
                 .contentType(URLENC)
                 .formParam("variant_ids[" + item.variantId() + "]", item.quantity())
                 .formParam("lang", "")
                 .when()
-                .post(CART_JSON_PATH);
-        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponseModel.class);
+                .post(CART_JSON_PATH)
+                .then()
+                .spec(SUCCESSFUL_CART_RESPONSE)
+                .extract()
+                .as(CartResponseModel.class);
     }
 
     @Step("Удаление товара из корзины DELETE /cart_items/{variantId}.json")
     public CartResponseModel deleteItem(long variantId) {
-        Response response = mutationRequest()
+        return mutationRequest()
                 .pathParam("variantId", variantId)
                 .when()
-                .delete(CART_PATH + "/{variantId}.json");
-        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponseModel.class);
+                .delete(CART_PATH + "/{variantId}.json")
+                .then()
+                .spec(SUCCESSFUL_CART_RESPONSE)
+                .extract()
+                .as(CartResponseModel.class);
     }
 
     private RequestSpecification mutationRequest() {
         if (csrfToken == null || csrfToken.isBlank()) {
             throw new IllegalStateException("Read the guest cart before modifying it to obtain a CSRF token");
         }
-        return cartMutationRequest(cookies, csrfToken, origin, origin + CART_PATH);
-    }
-
-    private <T> T readResponse(Response response, ResponseSpecification spec, Class<T> responseType) {
-        String updatedCsrfToken = response.getCookie(CSRF_COOKIE);
-        if (updatedCsrfToken != null) {
-            csrfToken = updatedCsrfToken;
-        }
-        return response.then()
-                .spec(spec)
-                .extract().as(responseType);
+        return cartMutationRequest(cookies, csrfToken, origin, origin + CART_PATH)
+                .filter(captureCsrfToken);
     }
 }
