@@ -1,9 +1,9 @@
 package ru.sbleskom.api.fixtures;
 
 import ru.sbleskom.api.CartApi;
-import ru.sbleskom.api.models.cart.AddToCartRequest;
-import ru.sbleskom.api.models.cart.CartItem;
-import ru.sbleskom.api.models.cart.CartResponse;
+import ru.sbleskom.api.models.cart.AddToCartRequestModel;
+import ru.sbleskom.api.models.cart.CartItemModel;
+import ru.sbleskom.api.models.cart.CartResponseModel;
 
 public class CartFixture implements AutoCloseable {
     private final CartApi cartApi;
@@ -13,14 +13,14 @@ public class CartFixture implements AutoCloseable {
         cartApi.getCart();
     }
 
-    public CartResponse addItem(AddToCartRequest item) {
+    public CartResponseModel addItem(AddToCartRequestModel item) {
         return cartApi.addItem(item);
     }
 
     @Override
     public void close() {
-        CartResponse cart = cartApi.getCartV2();
-        for (CartItem item : cart.items()) {
+        CartResponseModel cart = cartApi.getCartV2();
+        for (CartItemModel item : cart.items()) {
             cartApi.deleteItem(item.variantId());
         }
     }

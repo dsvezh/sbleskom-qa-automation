@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Product(
+public record ProductModel(
         long id,
         String title,
         boolean available,
-        List<ProductVariant> variants
+        List<ProductVariantModel> variants
 ) {}

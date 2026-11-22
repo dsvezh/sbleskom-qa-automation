@@ -5,9 +5,9 @@ import io.restassured.filter.cookie.CookieFilter;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import ru.sbleskom.api.models.cart.AddToCartRequest;
-import ru.sbleskom.api.models.cart.CartResponse;
-import ru.sbleskom.api.models.cart.LegacyCartResponse;
+import ru.sbleskom.api.models.cart.AddToCartRequestModel;
+import ru.sbleskom.api.models.cart.CartResponseModel;
+import ru.sbleskom.api.models.cart.LegacyCartResponseModel;
 
 import java.net.URI;
 
@@ -34,39 +34,39 @@ public class CartApi {
     }
 
     @Step("Получение корзины GET /cart_items.json")
-    public LegacyCartResponse getCart() {
+    public LegacyCartResponseModel getCart() {
         Response response = cartRequest(cookies)
                 .when()
                 .get(CART_JSON_PATH);
-        return readResponse(response, SUCCESSFUL_LEGACY_CART_RESPONSE, LegacyCartResponse.class);
+        return readResponse(response, SUCCESSFUL_LEGACY_CART_RESPONSE, LegacyCartResponseModel.class);
     }
 
     @Step("Получение корзины GET /cart_items/v2.json")
-    public CartResponse getCartV2() {
+    public CartResponseModel getCartV2() {
         Response response = cartRequest(cookies)
                 .when()
                 .get(CART_PATH + "/v2.json");
-        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponse.class);
+        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponseModel.class);
     }
 
     @Step("Добавление товара в корзину POST /cart_items.json")
-    public CartResponse addItem(AddToCartRequest item) {
+    public CartResponseModel addItem(AddToCartRequestModel item) {
         Response response = mutationRequest()
                 .contentType(URLENC)
                 .formParam("variant_ids[" + item.variantId() + "]", item.quantity())
                 .formParam("lang", "")
                 .when()
                 .post(CART_JSON_PATH);
-        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponse.class);
+        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponseModel.class);
     }
 
     @Step("Удаление товара из корзины DELETE /cart_items/{variantId}.json")
-    public CartResponse deleteItem(long variantId) {
+    public CartResponseModel deleteItem(long variantId) {
         Response response = mutationRequest()
                 .pathParam("variantId", variantId)
                 .when()
                 .delete(CART_PATH + "/{variantId}.json");
-        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponse.class);
+        return readResponse(response, SUCCESSFUL_CART_RESPONSE, CartResponseModel.class);
     }
 
     private RequestSpecification mutationRequest() {

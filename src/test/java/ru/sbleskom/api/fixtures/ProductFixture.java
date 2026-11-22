@@ -1,9 +1,9 @@
 package ru.sbleskom.api.fixtures;
 
 import ru.sbleskom.api.CatalogApi;
-import ru.sbleskom.api.models.catalog.CollectionResponse;
-import ru.sbleskom.api.models.catalog.Product;
-import ru.sbleskom.api.models.catalog.ProductVariant;
+import ru.sbleskom.api.models.catalog.CollectionResponseModel;
+import ru.sbleskom.api.models.catalog.ProductModel;
+import ru.sbleskom.api.models.catalog.ProductVariantModel;
 
 public class ProductFixture {
     private final CatalogApi catalogApi;
@@ -12,13 +12,13 @@ public class ProductFixture {
         this.catalogApi = catalogApi;
     }
 
-    public ProductVariant findAvailableVariant(String collectionSlug) {
-        CollectionResponse collection = catalogApi.getCollection(collectionSlug);
+    public ProductVariantModel findAvailableVariant(String collectionSlug) {
+        CollectionResponseModel collection = catalogApi.getCollection(collectionSlug);
 
         return collection.products().stream()
-                .filter(Product::available)
+                .filter(ProductModel::available)
                 .flatMap(product -> product.variants().stream())
-                .filter(ProductVariant::available)
+                .filter(ProductVariantModel::available)
                 .filter(variant -> variant.quantity() != null && variant.quantity() > 0)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(
