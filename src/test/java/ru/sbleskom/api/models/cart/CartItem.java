@@ -8,5 +8,10 @@ import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record CartItem(long productId, long variantId, String title, int quantity, BigDecimal salePrice) {
-}
+public record CartItem(
+        long productId,
+        long variantId,
+        String title,
+        int quantity,
+        BigDecimal salePrice
+) {}

@@ -9,5 +9,8 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record CartResponse(int itemsCount, BigDecimal totalPrice, List<CartItem> items) {
-}
+public record CartResponse(
+        int itemsCount,
+        BigDecimal totalPrice,
+        List<CartItem> items
+) {}
