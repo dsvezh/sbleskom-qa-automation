@@ -1,12 +1,12 @@
 package ru.sbleskom.api.specs.cart;
 
+import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.cookie.CookieFilter;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 
-import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
-import static ru.sbleskom.api.specs.BaseSpec.request;
+import static ru.sbleskom.api.specs.BaseSpec.BASE_REQUEST_SPEC;
 import static ru.sbleskom.api.specs.BaseSpec.successfulJsonResponse;
 
 public final class CartSpec {
@@ -18,19 +18,21 @@ public final class CartSpec {
             .expectBody(matchesJsonSchemaInClasspath("schemas/cart/cart-response.json"))
             .build();
 
-    private CartSpec() {
+    public static RequestSpecification cartRequestSpec(CookieFilter cookies) {
+        return new RequestSpecBuilder()
+                .addRequestSpecification(BASE_REQUEST_SPEC)
+                .addFilter(cookies)
+                .build();
     }
 
-    public static RequestSpecification cartRequest(CookieFilter cookies) {
-        return given(request()).filter(cookies);
-    }
-
-    public static RequestSpecification cartMutationRequest(CookieFilter cookies, String csrfToken,
-                                                           String origin, String referer) {
-        return cartRequest(cookies)
-                .header("X-CSRF-Token", csrfToken)
-                .header("X-Requested-With", "XMLHttpRequest")
-                .header("Origin", origin)
-                .header("Referer", referer);
+    public static RequestSpecification cartMutationRequestSpec(CookieFilter cookies, String csrfToken,
+                                                               String origin, String referer) {
+        return new RequestSpecBuilder()
+                .addRequestSpecification(cartRequestSpec(cookies))
+                .addHeader("X-CSRF-Token", csrfToken)
+                .addHeader("X-Requested-With", "XMLHttpRequest")
+                .addHeader("Origin", origin)
+                .addHeader("Referer", referer)
+                .build();
     }
 }

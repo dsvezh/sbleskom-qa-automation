@@ -4,19 +4,19 @@ import io.qameta.allure.Step;
 import io.restassured.filter.Filter;
 import io.restassured.filter.cookie.CookieFilter;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import ru.sbleskom.api.models.cart.AddToCartRequestModel;
 import ru.sbleskom.api.models.cart.CartResponseModel;
 import ru.sbleskom.api.models.cart.LegacyCartResponseModel;
 
 import java.net.URI;
 
+import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.URLENC;
 import static ru.sbleskom.api.specs.BaseSpec.BASE_URI;
 import static ru.sbleskom.api.specs.cart.CartSpec.SUCCESSFUL_CART_RESPONSE;
 import static ru.sbleskom.api.specs.cart.CartSpec.SUCCESSFUL_LEGACY_CART_RESPONSE;
-import static ru.sbleskom.api.specs.cart.CartSpec.cartMutationRequest;
-import static ru.sbleskom.api.specs.cart.CartSpec.cartRequest;
+import static ru.sbleskom.api.specs.cart.CartSpec.cartMutationRequestSpec;
+import static ru.sbleskom.api.specs.cart.CartSpec.cartRequestSpec;
 
 public class CartApi {
 
@@ -43,7 +43,7 @@ public class CartApi {
 
     @Step("Получение корзины GET /cart_items.json")
     public LegacyCartResponseModel getCart() {
-        return cartRequest(cookies)
+        return given(cartRequestSpec(cookies))
                 .filter(captureCsrfToken)
                 .when()
                 .get(CART_JSON_PATH)
@@ -55,7 +55,7 @@ public class CartApi {
 
     @Step("Получение корзины GET /cart_items/v2.json")
     public CartResponseModel getCartV2() {
-        return cartRequest(cookies)
+        return given(cartRequestSpec(cookies))
                 .filter(captureCsrfToken)
                 .when()
                 .get(CART_PATH + "/v2.json")
@@ -67,7 +67,8 @@ public class CartApi {
 
     @Step("Добавление товара в корзину POST /cart_items.json")
     public CartResponseModel addItem(AddToCartRequestModel item) {
-        return mutationRequest()
+        return given(cartMutationRequestSpec(cookies, requireCsrfToken(), origin, origin + CART_PATH))
+                .filter(captureCsrfToken)
                 .contentType(URLENC)
                 .formParam("variant_ids[" + item.variantId() + "]", item.quantity())
                 .formParam("lang", "")
@@ -81,7 +82,8 @@ public class CartApi {
 
     @Step("Удаление товара из корзины DELETE /cart_items/{variantId}.json")
     public CartResponseModel deleteItem(long variantId) {
-        return mutationRequest()
+        return given(cartMutationRequestSpec(cookies, requireCsrfToken(), origin, origin + CART_PATH))
+                .filter(captureCsrfToken)
                 .pathParam("variantId", variantId)
                 .when()
                 .delete(CART_PATH + "/{variantId}.json")
@@ -91,11 +93,10 @@ public class CartApi {
                 .as(CartResponseModel.class);
     }
 
-    private RequestSpecification mutationRequest() {
+    private String requireCsrfToken() {
         if (csrfToken == null || csrfToken.isBlank()) {
             throw new IllegalStateException("Read the guest cart before modifying it to obtain a CSRF token");
         }
-        return cartMutationRequest(cookies, csrfToken, origin, origin + CART_PATH)
-                .filter(captureCsrfToken);
+        return csrfToken;
     }
 }
