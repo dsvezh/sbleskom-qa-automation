@@ -48,7 +48,7 @@ test {
     systemProperty 'file.encoding', 'UTF-8'
     systemProperty 'selenide.browser', System.getProperty('selenide.browser', 'chrome')
     systemProperty 'baseUrl', System.getProperty('baseUrl', 'https://sbleskom.ru')
-    ['apiBaseUrl', 'remoteUrl', 'videoUrl', 'browserVersion', 'browserSize'].each { propertyName ->
+    ['remoteUrl', 'videoUrl', 'browserVersion', 'browserSize'].each { propertyName ->
         if (System.getProperty(propertyName) != null) {
             systemProperty propertyName, System.getProperty(propertyName)
         }

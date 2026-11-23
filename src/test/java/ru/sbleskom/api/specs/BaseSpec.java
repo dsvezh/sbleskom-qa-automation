@@ -8,8 +8,7 @@ import io.restassured.specification.RequestSpecification;
 import static io.restassured.http.ContentType.JSON;
 
 public final class BaseSpec {
-    public static final String BASE_URI = System.getProperty("apiBaseUrl",
-            System.getProperty("baseUrl", "https://sbleskom.ru"));
+    public static final String BASE_URI = System.getProperty("baseUrl", "https://sbleskom.ru");
 
     public static RequestSpecification request() {
         return new RequestSpecBuilder()
