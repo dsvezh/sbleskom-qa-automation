@@ -2,6 +2,9 @@ package ru.sbleskom.api.tests;
 
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
+import io.qameta.allure.Severity;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import ru.sbleskom.api.models.cart.LegacyCartResponseModel;
 import ru.sbleskom.api.models.catalog.ProductVariantModel;
 
 import static io.qameta.allure.Allure.step;
+import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,7 +32,10 @@ class CartApiTest {
     private final ProductFixture products = new ProductFixture(api.catalog);
 
     @Test
+    @Story("Получение пустой корзины нового гостя")
     @DisplayName("GET возвращает пустую корзину для нового гостя")
+    @Owner("d.svezhov")
+    @Severity(CRITICAL)
     void guestCartShouldBeEmpty() {
         LegacyCartResponseModel cart = step("Запросить корзину нового гостя", api.cart::getCart);
 
@@ -38,7 +45,10 @@ class CartApiTest {
     }
 
     @Test
+    @Story("Добавление товара в корзину")
     @DisplayName("POST добавляет выбранный вариант товара в корзину")
+    @Owner("d.svezhov")
+    @Severity(CRITICAL)
     void itemShouldBeAddedToCart() {
         ProductVariantModel variant = step("Подобрать доступный вариант товара в каталоге",
                 () -> products.findAvailableVariant("all"));
@@ -53,7 +63,10 @@ class CartApiTest {
     }
 
     @Test
+    @Story("Получение добавленного товара в той же гостевой сессии")
     @DisplayName("GET возвращает ранее добавленный вариант в той же гостевой сессии")
+    @Owner("d.svezhov")
+    @Severity(CRITICAL)
     void cartShouldReturnPreviouslyAddedItem() {
         ProductVariantModel variant = step("Подобрать доступный вариант товара в каталоге",
                 () -> products.findAvailableVariant("all"));
@@ -72,7 +85,10 @@ class CartApiTest {
     }
 
     @Test
+    @Story("Удаление товара из корзины")
     @DisplayName("DELETE удаляет выбранный вариант, и следующий GET возвращает пустую корзину")
+    @Owner("d.svezhov")
+    @Severity(CRITICAL)
     void itemShouldBeDeletedFromCart() {
         ProductVariantModel variant = step("Подобрать доступный вариант товара в каталоге",
                 () -> products.findAvailableVariant("all"));

@@ -2,6 +2,9 @@ package ru.sbleskom.api.tests;
 
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
+import io.qameta.allure.Severity;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,6 +13,7 @@ import ru.sbleskom.api.models.catalog.CollectionResponseModel;
 import ru.sbleskom.api.models.catalog.ProductModel;
 
 import static io.qameta.allure.Allure.step;
+import static io.qameta.allure.SeverityLevel.CRITICAL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,7 +25,10 @@ class CatalogApiTest {
     private final ApiClient api = new ApiClient();
 
     @Test
+    @Story("Получение товаров из каталога")
     @DisplayName("GET возвращает товары коллекции «Каталог»")
+    @Owner("d.svezhov")
+    @Severity(CRITICAL)
     void collectionShouldContainProducts() {
         CollectionResponseModel collection = step("Запросить коллекцию «Каталог»",
                 () -> api.catalog.getCollection("all"));
