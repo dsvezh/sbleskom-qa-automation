@@ -14,7 +14,6 @@ import ru.sbleskom.api.fixtures.ProductFixture;
 import ru.sbleskom.api.models.cart.AddToCartRequestModel;
 import ru.sbleskom.api.models.cart.CartItemModel;
 import ru.sbleskom.api.models.cart.CartResponseModel;
-import ru.sbleskom.api.models.cart.LegacyCartResponseModel;
 import ru.sbleskom.api.models.catalog.ProductVariantModel;
 
 import static io.qameta.allure.Allure.step;
@@ -37,11 +36,11 @@ class CartApiTest {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void guestCartShouldBeEmpty() {
-        LegacyCartResponseModel cart = step("Запросить корзину нового гостя", api.cart::getCart);
+        CartResponseModel cart = step("Запросить корзину нового гостя", api.cart::getCartV2);
 
         step("Проверить, что гостевая корзина пуста", () -> assertAll(
                 () -> assertEquals(0, cart.itemsCount(), "Счётчик позиций новой корзины не равен нулю"),
-                () -> assertTrue(cart.orderLines().isEmpty(), "В новой корзине не должно быть позиций")));
+                () -> assertTrue(cart.items().isEmpty(), "В новой корзине не должно быть позиций")));
     }
 
     @Test
@@ -108,10 +107,10 @@ class CartApiTest {
             });
 
             step("Повторно прочитать корзину через GET и подтвердить, что она пуста", () -> {
-                LegacyCartResponseModel afterDeletion = api.cart.getCart();
+                CartResponseModel afterDeletion = api.cart.getCartV2();
                 assertAll(
                         () -> assertEquals(0, afterDeletion.itemsCount(), "Счётчик позиций после повторного GET"),
-                        () -> assertTrue(afterDeletion.orderLines().isEmpty(), "Удалённый вариант остался в корзине"));
+                        () -> assertTrue(afterDeletion.items().isEmpty(), "Удалённый вариант остался в корзине"));
             });
         }
     }

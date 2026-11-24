@@ -10,10 +10,6 @@ import static ru.sbleskom.api.specs.BaseSpec.BASE_REQUEST_SPEC;
 import static ru.sbleskom.api.specs.BaseSpec.successfulJsonResponse;
 
 public final class CartSpec {
-    public static final ResponseSpecification SUCCESSFUL_LEGACY_CART_RESPONSE = successfulJsonResponse()
-            .expectBody(matchesJsonSchemaInClasspath("schemas/cart/legacy-cart-response.json"))
-            .build();
-
     public static final ResponseSpecification SUCCESSFUL_CART_RESPONSE = successfulJsonResponse()
             .expectBody(matchesJsonSchemaInClasspath("schemas/cart/cart-response.json"))
             .build();

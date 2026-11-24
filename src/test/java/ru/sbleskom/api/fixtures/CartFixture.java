@@ -10,7 +10,7 @@ public class CartFixture implements AutoCloseable {
 
     public CartFixture(CartApi cartApi) {
         this.cartApi = cartApi;
-        cartApi.getCart();
+        cartApi.getCartV2();
     }
 
     public CartResponseModel addItem(AddToCartRequestModel item) {

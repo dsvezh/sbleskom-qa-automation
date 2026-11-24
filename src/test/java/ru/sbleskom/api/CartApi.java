@@ -6,7 +6,6 @@ import io.restassured.filter.cookie.CookieFilter;
 import io.restassured.response.Response;
 import ru.sbleskom.api.models.cart.AddToCartRequestModel;
 import ru.sbleskom.api.models.cart.CartResponseModel;
-import ru.sbleskom.api.models.cart.LegacyCartResponseModel;
 
 import java.net.URI;
 
@@ -14,7 +13,6 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.URLENC;
 import static ru.sbleskom.api.specs.BaseSpec.BASE_URI;
 import static ru.sbleskom.api.specs.cart.CartSpec.SUCCESSFUL_CART_RESPONSE;
-import static ru.sbleskom.api.specs.cart.CartSpec.SUCCESSFUL_LEGACY_CART_RESPONSE;
 import static ru.sbleskom.api.specs.cart.CartSpec.cartMutationRequestSpec;
 import static ru.sbleskom.api.specs.cart.CartSpec.cartRequestSpec;
 
@@ -39,18 +37,6 @@ public class CartApi {
     public CartApi() {
         URI uri = URI.create(BASE_URI);
         origin = uri.getScheme() + "://" + uri.getRawAuthority();
-    }
-
-    @Step("Получение корзины GET /cart_items.json")
-    public LegacyCartResponseModel getCart() {
-        return given(cartRequestSpec(cookies))
-                .filter(captureCsrfToken)
-                .when()
-                .get(CART_JSON_PATH)
-                .then()
-                .spec(SUCCESSFUL_LEGACY_CART_RESPONSE)
-                .extract()
-                .as(LegacyCartResponseModel.class);
     }
 
     @Step("Получение корзины GET /cart_items/v2.json")
