@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import ru.sbleskom.api.ApiClient;
 import ru.sbleskom.api.fixtures.CartFixture;
 import ru.sbleskom.api.fixtures.ProductFixture;
+import ru.sbleskom.api.fixtures.ProductFixture.AvailableVariant;
 import ru.sbleskom.api.models.cart.AddToCartRequestModel;
 import ru.sbleskom.api.models.cart.CartItemModel;
 import ru.sbleskom.api.models.cart.CartResponseModel;
@@ -49,15 +50,29 @@ class CartApiTest {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void itemShouldBeAddedToCart() {
-        ProductVariantModel variant = step("Подобрать доступный вариант товара в каталоге",
+        AvailableVariant selection = step("Подобрать доступный вариант товара в каталоге",
                 () -> products.findAvailableVariant("all"));
+        ProductVariantModel variant = selection.variant();
+        String expectedTitle = variant.title().isBlank()
+                ? selection.productTitle()
+                : "%s (%s)".formatted(selection.productTitle(), variant.title());
         AddToCartRequestModel request = new AddToCartRequestModel(variant.id(), 1);
 
         try (CartFixture fixture = step("Открыть новую гостевую корзину", () -> new CartFixture(api.cart))) {
             CartResponseModel cart = step("Добавить одну единицу товара", () -> api.cart.addItem(request));
 
-            step("Сверить ID товара, ID варианта и количество в модели корзины",
-                    () -> assertSingleItem(cart, variant, request.quantity()));
+            step("Проверить, что в корзине только выбранный вариант в запрошенном количестве", () -> {
+                assertEquals(1, cart.items().size(), "В корзине должна быть одна позиция");
+                CartItemModel item = cart.items().get(0);
+                assertAll(
+                        () -> assertEquals(1, cart.itemsCount(), "Счётчик позиций корзины"),
+                        () -> assertEquals(variant.productId(), item.productId(), "ID товара"),
+                        () -> assertEquals(variant.id(), item.variantId(), "ID варианта"),
+                        () -> assertEquals(expectedTitle, item.title(), "Название позиции"),
+                        () -> assertEquals(request.quantity(), item.quantity(), "Количество товара"),
+                        () -> assertEquals(variant.price().stripTrailingZeros(),
+                                item.salePrice().stripTrailingZeros(), "Цена продажи"));
+            });
         }
     }
 
@@ -67,8 +82,12 @@ class CartApiTest {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void cartShouldReturnPreviouslyAddedItem() {
-        ProductVariantModel variant = step("Подобрать доступный вариант товара в каталоге",
+        AvailableVariant selection = step("Подобрать доступный вариант товара в каталоге",
                 () -> products.findAvailableVariant("all"));
+        ProductVariantModel variant = selection.variant();
+        String expectedTitle = variant.title().isBlank()
+                ? selection.productTitle()
+                : "%s (%s)".formatted(selection.productTitle(), variant.title());
         AddToCartRequestModel request = new AddToCartRequestModel(variant.id(), 1);
 
         try (CartFixture fixture = step("Открыть новую гостевую корзину", () -> new CartFixture(api.cart))) {
@@ -78,8 +97,18 @@ class CartApiTest {
 
             CartResponseModel cart = step("Прочитать корзину в той же сессии", api.cart::getCartV2);
 
-            step("Сверить ID товара, ID варианта и количество в модели корзины",
-                    () -> assertSingleItem(cart, variant, request.quantity()));
+            step("Проверить, что в корзине только выбранный вариант в запрошенном количестве", () -> {
+                assertEquals(1, cart.items().size(), "В корзине должна быть одна позиция");
+                CartItemModel item = cart.items().get(0);
+                assertAll(
+                        () -> assertEquals(1, cart.itemsCount(), "Счётчик позиций корзины"),
+                        () -> assertEquals(variant.productId(), item.productId(), "ID товара"),
+                        () -> assertEquals(variant.id(), item.variantId(), "ID варианта"),
+                        () -> assertEquals(expectedTitle, item.title(), "Название позиции"),
+                        () -> assertEquals(request.quantity(), item.quantity(), "Количество товара"),
+                        () -> assertEquals(variant.price().stripTrailingZeros(),
+                                item.salePrice().stripTrailingZeros(), "Цена продажи"));
+            });
         }
     }
 
@@ -89,14 +118,27 @@ class CartApiTest {
     @Owner("d.svezhov")
     @Severity(CRITICAL)
     void itemShouldBeDeletedFromCart() {
-        ProductVariantModel variant = step("Подобрать доступный вариант товара в каталоге",
+        AvailableVariant selection = step("Подобрать доступный вариант товара в каталоге",
                 () -> products.findAvailableVariant("all"));
+        ProductVariantModel variant = selection.variant();
+        String expectedTitle = variant.title().isBlank()
+                ? selection.productTitle()
+                : "%s (%s)".formatted(selection.productTitle(), variant.title());
         AddToCartRequestModel request = new AddToCartRequestModel(variant.id(), 1);
 
         try (CartFixture fixture = step("Открыть новую гостевую корзину", () -> new CartFixture(api.cart))) {
             step("Добавить выбранный вариант и убедиться, что он появился в корзине", () -> {
                 CartResponseModel beforeDeletion = api.cart.addItem(request);
-                assertSingleItem(beforeDeletion, variant, request.quantity());
+                assertEquals(1, beforeDeletion.items().size(), "В корзине должна быть одна позиция");
+                CartItemModel item = beforeDeletion.items().get(0);
+                assertAll(
+                        () -> assertEquals(1, beforeDeletion.itemsCount(), "Счётчик позиций корзины"),
+                        () -> assertEquals(variant.productId(), item.productId(), "ID товара"),
+                        () -> assertEquals(variant.id(), item.variantId(), "ID варианта"),
+                        () -> assertEquals(expectedTitle, item.title(), "Название позиции"),
+                        () -> assertEquals(request.quantity(), item.quantity(), "Количество товара"),
+                        () -> assertEquals(variant.price().stripTrailingZeros(),
+                                item.salePrice().stripTrailingZeros(), "Цена продажи"));
             });
 
             step("Удалить выбранный вариант и проверить, что DELETE вернул пустую корзину", () -> {
@@ -113,16 +155,5 @@ class CartApiTest {
                         () -> assertTrue(afterDeletion.items().isEmpty(), "Удалённый вариант остался в корзине"));
             });
         }
-    }
-
-    private void assertSingleItem(CartResponseModel cart, ProductVariantModel variant, int quantity) {
-        assertEquals(1, cart.items().size(), "В корзине должна быть одна позиция");
-        CartItemModel item = cart.items().get(0);
-        assertAll(
-                () -> assertEquals(1, cart.itemsCount(), "Счётчик позиций корзины"),
-                () -> assertEquals(variant.productId(), item.productId(), "ID товара"),
-                () -> assertEquals(variant.id(), item.variantId(), "ID варианта"),
-                () -> assertEquals(quantity, item.quantity(), "Количество товара")
-        );
     }
 }

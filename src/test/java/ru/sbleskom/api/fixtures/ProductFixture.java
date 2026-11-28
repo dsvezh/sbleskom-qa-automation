@@ -12,16 +12,19 @@ public class ProductFixture {
         this.catalogApi = catalogApi;
     }
 
-    public ProductVariantModel findAvailableVariant(String collectionSlug) {
+    public AvailableVariant findAvailableVariant(String collectionSlug) {
         CollectionResponseModel collection = catalogApi.getCollection(collectionSlug);
 
         return collection.products().stream()
                 .filter(ProductModel::available)
-                .flatMap(product -> product.variants().stream())
-                .filter(ProductVariantModel::available)
-                .filter(variant -> variant.quantity() != null && variant.quantity() > 0)
+                .flatMap(product -> product.variants().stream()
+                        .filter(ProductVariantModel::available)
+                        .filter(variant -> variant.quantity() != null && variant.quantity() > 0)
+                        .map(variant -> new AvailableVariant(product.title(), variant)))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(
                         "В коллекции нет доступных вариантов товара в наличии: " + collectionSlug));
     }
+
+    public record AvailableVariant(String productTitle, ProductVariantModel variant) {}
 }
