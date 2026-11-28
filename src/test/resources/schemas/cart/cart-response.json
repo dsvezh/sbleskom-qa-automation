@@ -1,20 +1,420 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
-  "required": ["items_count", "total_price", "items"],
+  "additionalProperties": false,
+  "required": [
+    "currency", "currency_format", "discount_description", "discounts", "errors", "items", "items_count",
+    "margin", "margin_amount", "order", "total_price", "warehouse_id"
+  ],
   "properties": {
-    "items_count": {"type": "integer"},
-    "total_price": {"type": "number"},
+    "currency": {"type": "string"},
+    "currency_format": {"type": "string"},
+    "discount_description": {"type": "null"},
+    "discounts": {"type": "array", "maxItems": 0},
+    "errors": {"type": "array", "maxItems": 0},
+    "id": {"type": "null"},
     "items": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["product_id", "variant_id", "quantity"],
-        "properties": {
-          "product_id": {"type": "integer"},
-          "variant_id": {"type": "integer"},
-          "quantity": {"type": "integer"}
-        }
+      "items": {"$ref": "#/definitions/cartItem"}
+    },
+    "items_count": {"type": "integer"},
+    "margin": {"type": "string"},
+    "margin_amount": {"type": "string"},
+    "order": {"$ref": "#/definitions/order"},
+    "status": {"type": "string"},
+    "total_price": {"type": "number"},
+    "warehouse_id": {"type": "null"}
+  },
+  "definitions": {
+    "cartItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accessory_lines", "added_at", "barcode", "cart_line_id", "category_id", "dimensions",
+        "full_total_price", "id", "images", "partial_discount", "product", "product_id",
+        "product_updated_at", "product_url", "quantity", "reserved_quantity", "sale_price", "sku",
+        "stock_item_id", "title", "total_price", "url", "variant_id", "variant_quantity", "vat", "weight"
+      ],
+      "properties": {
+        "accessory_lines": {"type": "array", "maxItems": 0},
+        "added_at": {"type": "integer"},
+        "barcode": {"type": ["string", "null"]},
+        "cart_line_id": {"type": "string"},
+        "category_id": {"type": "integer"},
+        "dimensions": {"type": "null"},
+        "full_total_price": {"type": "number"},
+        "id": {"type": "null"},
+        "images": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/productImage"}
+        },
+        "partial_discount": {"type": "boolean"},
+        "product": {"$ref": "#/definitions/cartProduct"},
+        "product_id": {"type": "integer"},
+        "product_updated_at": {"type": "string"},
+        "product_url": {"type": "string"},
+        "quantity": {"type": "integer"},
+        "reserved_quantity": {"type": "null"},
+        "sale_price": {"type": "number"},
+        "sku": {"type": "string"},
+        "stock_item_id": {"type": "integer"},
+        "title": {"type": "string"},
+        "total_price": {"type": "number"},
+        "url": {"type": "string"},
+        "variant_id": {"type": "integer"},
+        "variant_quantity": {"type": "integer"},
+        "vat": {"type": "integer"},
+        "weight": {"type": "null"}
+      }
+    },
+    "cartProduct": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available", "bundle", "canonical_url_collection_id", "category_id", "first_image", "gift_card", "id",
+        "images", "is_adult", "list_card_mode", "list_card_mode_with_variants", "permalink",
+        "price_kinds", "price_max", "price_min", "reviews_average_rating_cached", "reviews_count_cached",
+        "sber_bnpl_price", "short_description", "title", "unit", "updated_at", "url", "video_links"
+      ],
+      "properties": {
+        "available": {"type": "boolean"},
+        "bundle": {"type": "null"},
+        "canonical_url_collection_id": {"type": "integer"},
+        "category_id": {"type": "integer"},
+        "first_image": {"$ref": "#/definitions/productImage"},
+        "gift_card": {"type": "boolean"},
+        "id": {"type": "integer"},
+        "images": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/productImage"}
+        },
+        "is_adult": {"type": "boolean"},
+        "list_card_mode": {"type": "string"},
+        "list_card_mode_with_variants": {"type": "string"},
+        "permalink": {"type": "string"},
+        "price_kinds": {"type": "array", "maxItems": 0},
+        "price_max": {"type": "string"},
+        "price_min": {"type": "string"},
+        "reviews_average_rating_cached": {"type": ["string", "null"]},
+        "reviews_count_cached": {"type": ["integer", "null"]},
+        "sber_bnpl_price": {"type": "integer"},
+        "short_description": {"type": ["string", "null"]},
+        "title": {"type": "string"},
+        "unit": {"type": "string"},
+        "updated_at": {"type": "string"},
+        "url": {"type": "string"},
+        "video_links": {"type": "array", "maxItems": 0}
+      }
+    },
+    "clientInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bank_name", "bik", "consent_to_personal_data", "contact_name", "correspondent_account", "email",
+        "fields_values_attributes", "human_type", "id", "inn", "juridical_address", "kpp", "middlename",
+        "name", "o_auth_provider", "o_auth_uid", "ogrn", "okpo", "partially_initialized", "password",
+        "password_confirmation", "phone", "registered", "settlement_account", "subscribe", "surname"
+      ],
+      "properties": {
+        "bank_name": {"type": "null"},
+        "bik": {"type": "null"},
+        "consent_to_personal_data": {"type": "null"},
+        "contact_name": {"type": "null"},
+        "correspondent_account": {"type": "null"},
+        "email": {"type": "null"},
+        "fields_values_attributes": {"type": "array", "maxItems": 0},
+        "human_type": {"type": "string"},
+        "id": {"type": "null"},
+        "inn": {"type": "null"},
+        "juridical_address": {"type": "null"},
+        "kpp": {"type": "null"},
+        "middlename": {"type": "null"},
+        "name": {"type": "null"},
+        "o_auth_provider": {"type": "null"},
+        "o_auth_uid": {"type": "null"},
+        "ogrn": {"type": "null"},
+        "okpo": {"type": "null"},
+        "partially_initialized": {"type": "null"},
+        "password": {"type": "null"},
+        "password_confirmation": {"type": "null"},
+        "phone": {"type": "null"},
+        "registered": {"type": "boolean"},
+        "settlement_account": {"type": "null"},
+        "subscribe": {"type": ["boolean", "null"]},
+        "surname": {"type": "null"}
+      }
+    },
+    "deliveryInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delivery_interval", "delivery_variant_id", "description", "errors", "fields_values",
+        "not_available", "outlet", "price", "shipping_company", "shipping_company_handle", "tariff_id",
+        "title", "warnings"
+      ],
+      "properties": {
+        "delivery_interval": {"$ref": "#/definitions/deliveryInterval"},
+        "delivery_variant_id": {"type": ["integer", "null"]},
+        "description": {"type": "null"},
+        "errors": {"type": "array", "maxItems": 0},
+        "fields_values": {"type": "array", "maxItems": 0},
+        "not_available": {"type": "null"},
+        "outlet": {"$ref": "#/definitions/deliveryOutlet"},
+        "price": {"type": "null"},
+        "shipping_company": {"type": "null"},
+        "shipping_company_handle": {"type": "null"},
+        "tariff_id": {"type": "null"},
+        "title": {"type": "null"},
+        "warnings": {"type": "array", "maxItems": 0}
+      }
+    },
+    "deliveryInterval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "max_days", "min_days"],
+      "properties": {
+        "description": {"type": "string"},
+        "max_days": {"type": "null"},
+        "min_days": {"type": "null"}
+      }
+    },
+    "deliveryOutlet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "address", "description", "external_id", "id", "latitude", "longitude", "payment_method",
+        "source_id", "title", "type"
+      ],
+      "properties": {
+        "address": {"type": "null"},
+        "description": {"type": "null"},
+        "external_id": {"type": "null"},
+        "id": {"type": "null"},
+        "latitude": {"type": "null"},
+        "longitude": {"type": "null"},
+        "payment_method": {"type": ["array", "null"], "maxItems": 0},
+        "source_id": {"type": "null"},
+        "title": {"type": "null"},
+        "type": {"type": "null"}
+      }
+    },
+    "order": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bonus_points", "cache", "checkout_version", "client_bonus_points", "client_info", "comment",
+        "cookies", "current_location", "custom_prices", "custom_status_permalink", "delivery_date",
+        "delivery_description", "delivery_from_hour", "delivery_from_minutes",
+        "delivery_info_attributes", "delivery_price", "delivery_title", "delivery_to_hour",
+        "delivery_to_minutes", "delivery_variant_id", "deprecated_items", "discounts_attributes",
+        "fields_values_attributes", "financial_status", "first_current_location", "first_referer",
+        "fulfillment_status", "horeca_table_permalink", "id", "items", "items_added_at",
+        "not_create_discounts", "order_line_comments", "order_lines", "parameters", "payment_gateway_id",
+        "referer", "save_address_as_default", "session_key", "shipping_address_info", "use_bonus_points",
+        "visit_new_stat_draft", "warehouse_id"
+      ],
+      "properties": {
+        "bonus_points": {"type": "integer"},
+        "cache": {"type": "null"},
+        "cart_recipient": {"type": "null"},
+        "checkout_version": {"type": "null"},
+        "client_bonus_points": {"type": "integer"},
+        "client_info": {"$ref": "#/definitions/clientInfo"},
+        "comment": {"type": "null"},
+        "cookies": {"type": "null"},
+        "current_location": {"type": ["string", "null"]},
+        "custom_prices": {"type": "null"},
+        "custom_status_permalink": {"type": ["string", "null"]},
+        "delivery_date": {"type": "null"},
+        "delivery_description": {"type": "null"},
+        "delivery_from_hour": {"type": "null"},
+        "delivery_from_minutes": {"type": "null"},
+        "delivery_info_attributes": {"$ref": "#/definitions/deliveryInfo"},
+        "delivery_price": {"type": "number"},
+        "delivery_title": {"type": "null"},
+        "delivery_to_hour": {"type": "null"},
+        "delivery_to_minutes": {"type": "null"},
+        "delivery_variant_id": {"type": "null"},
+        "deprecated_items": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9]+$": {"type": "integer"}
+          }
+        },
+        "discounts_attributes": {"type": "array", "maxItems": 0},
+        "fields_values_attributes": {"type": "array", "maxItems": 0},
+        "financial_status": {"type": "string"},
+        "first_current_location": {"type": ["string", "null"]},
+        "first_referer": {"type": ["string", "null"]},
+        "fulfillment_status": {"type": "string"},
+        "horeca_table_permalink": {"type": "null"},
+        "id": {"type": "null"},
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$": {"$ref": "#/definitions/orderItem"}
+          }
+        },
+        "items_added_at": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9]+$": {"type": "integer"}
+          }
+        },
+        "multi_orders": {"type": "null"},
+        "not_create_discounts": {"type": "null"},
+        "order_line_comments": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9]+$": {"type": "null"}
+          }
+        },
+        "order_lines": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/orderLine"}
+        },
+        "parameters": {"type": "object", "additionalProperties": false},
+        "payment_gateway_id": {"type": "null"},
+        "possible_orders": {"type": "null"},
+        "possible_orders_cart_fingerprint": {"type": "null"},
+        "referer": {"type": ["string", "null"]},
+        "save_address_as_default": {"type": "null"},
+        "session_key": {"type": ["string", "null"]},
+        "shipping_address_info": {"$ref": "#/definitions/shippingAddress"},
+        "use_bonus_points": {"type": "null"},
+        "visit_new_stat_draft": {"type": "null"},
+        "warehouse_id": {"type": "null"},
+        "yandex_metrika_client_id": {"type": "null"}
+      }
+    },
+    "orderItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accessories", "accessory_value_ids", "added_at", "bundle_id", "cart_line_id", "comment",
+        "component_price", "id", "quantity", "sale_price", "title", "variant_id", "weight"
+      ],
+      "properties": {
+        "accessories": {"type": "array", "maxItems": 0},
+        "accessory_value_ids": {"type": "array", "maxItems": 0},
+        "added_at": {"type": "integer"},
+        "bundle_id": {"type": "null"},
+        "cart_line_id": {"type": "string"},
+        "comment": {"type": "null"},
+        "component_price": {"type": "null"},
+        "id": {"type": "integer"},
+        "quantity": {"type": "integer"},
+        "sale_price": {"type": "number"},
+        "title": {"type": "string"},
+        "variant_id": {"type": "integer"},
+        "weight": {"type": "null"}
+      }
+    },
+    "orderLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accessory_lines", "added_at", "barcode", "cart_line_id", "category_id", "comment", "dimensions",
+        "full_total_price", "id", "images", "partial_discount", "product_id", "product_updated_at",
+        "product_url", "quantity", "reserved_quantity", "sale_price", "sku", "stock_item_id", "title",
+        "total_price", "url", "variant_id", "variant_quantity", "vat", "weight"
+      ],
+      "properties": {
+        "accessory_lines": {"type": "array", "maxItems": 0},
+        "added_at": {"type": "integer"},
+        "barcode": {"type": ["string", "null"]},
+        "cart_line_id": {"type": "string"},
+        "category_id": {"type": "integer"},
+        "comment": {"type": "null"},
+        "dimensions": {"type": "null"},
+        "full_total_price": {"type": "number"},
+        "id": {"type": "null"},
+        "images": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/productImage"}
+        },
+        "partial_discount": {"type": "boolean"},
+        "product_id": {"type": "integer"},
+        "product_updated_at": {"type": "string"},
+        "product_url": {"type": "string"},
+        "quantity": {"type": "integer"},
+        "reserved_quantity": {"type": "null"},
+        "sale_price": {"type": "number"},
+        "sku": {"type": "string"},
+        "stock_item_id": {"type": "integer"},
+        "title": {"type": "string"},
+        "total_price": {"type": "number"},
+        "url": {"type": "string"},
+        "variant_id": {"type": "integer"},
+        "variant_quantity": {"type": "integer"},
+        "vat": {"type": "integer"},
+        "weight": {"type": "null"}
+      }
+    },
+    "productImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compact_url", "created_at", "external_id", "filename", "has_bitmap_image", "id",
+        "image_content_type", "image_processing", "large_url", "medium_url", "original_url", "position",
+        "product_id", "small_url", "thumb_url", "title", "url"
+      ],
+      "properties": {
+        "compact_url": {"type": "string"},
+        "created_at": {"type": "string"},
+        "external_id": {"type": "null"},
+        "filename": {"type": "string"},
+        "has_bitmap_image": {"type": "boolean"},
+        "id": {"type": "integer"},
+        "image_content_type": {"type": "string"},
+        "image_processing": {"type": "boolean"},
+        "large_url": {"type": "string"},
+        "medium_url": {"type": "string"},
+        "original_url": {"type": "string"},
+        "position": {"type": "integer"},
+        "product_id": {"type": "integer"},
+        "small_url": {"type": "string"},
+        "thumb_url": {"type": "string"},
+        "title": {"type": "null"},
+        "url": {"type": "string"}
+      }
+    },
+    "shippingAddress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "address", "city", "comment", "country", "doorphone", "entrance", "fields_values_attributes",
+        "flat", "floor", "full_delivery_address", "full_locality_name", "house", "kladr_json", "located",
+        "middlename", "name", "no_delivery", "phone", "state", "street", "surname", "zip"
+      ],
+      "properties": {
+        "address": {"type": "null"},
+        "city": {"type": ["string", "null"]},
+        "comment": {"type": "null"},
+        "country": {"type": "null"},
+        "doorphone": {"type": "null"},
+        "email": {"type": "null"},
+        "entrance": {"type": "null"},
+        "fields_values_attributes": {"type": "array", "maxItems": 0},
+        "flat": {"type": "null"},
+        "floor": {"type": "null"},
+        "full_delivery_address": {"type": "string"},
+        "full_locality_name": {"type": ["string", "null"]},
+        "house": {"type": "null"},
+        "kladr_json": {"type": ["string", "null"]},
+        "located": {"type": ["boolean", "null"]},
+        "middlename": {"type": "null"},
+        "name": {"type": "null"},
+        "no_delivery": {"type": "boolean"},
+        "phone": {"type": "null"},
+        "state": {"type": ["string", "null"]},
+        "street": {"type": "null"},
+        "surname": {"type": "null"},
+        "zip": {"type": "null"}
       }
     }
   }

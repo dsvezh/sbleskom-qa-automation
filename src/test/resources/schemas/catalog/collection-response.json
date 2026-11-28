@@ -1,33 +1,259 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
-  "required": ["status", "count", "products"],
+  "additionalProperties": false,
+  "required": ["count", "products", "status"],
   "properties": {
-    "status": {"type": "string"},
     "count": {"type": "integer"},
     "products": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["id", "title", "available", "variants"],
+      "items": {"$ref": "#/definitions/product"}
+    },
+    "status": {"type": "string"}
+  },
+  "definitions": {
+    "accessory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accessory_values", "back_office_name", "id", "max_count", "min_count", "name", "permalink"],
+      "properties": {
+        "accessory_values": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/accessoryValue"}
+        },
+        "back_office_name": {"type": "string"},
+        "id": {"type": "integer"},
+        "max_count": {"type": "integer"},
+        "min_count": {"type": "integer"},
+        "name": {"type": "string"},
+        "permalink": {"type": "string"}
+      }
+    },
+    "accessoryValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accounting_variant_id", "accounting_variant_title", "data_id", "id", "name", "price"],
+      "properties": {
+        "accounting_variant_id": {"type": "null"},
+        "accounting_variant_title": {"type": "null"},
+        "data_id": {"type": "integer"},
+        "id": {"type": "integer"},
+        "name": {"type": "string"},
+        "price": {"type": "string"}
+      }
+    },
+    "characteristic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "permalink", "position", "property_id", "title"],
+      "properties": {
+        "id": {"type": "integer"},
+        "permalink": {"type": "string"},
+        "position": {"type": "integer"},
+        "property_id": {"type": "integer"},
+        "title": {"type": "string"}
+      }
+    },
+    "optionName": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_permalink", "id", "navigational", "permalink", "position", "title"],
+      "properties": {
+        "api_permalink": {"type": ["string", "null"]},
+        "id": {"type": "integer"},
+        "navigational": {"type": "boolean"},
+        "permalink": {"type": ["string", "null"]},
+        "position": {"type": "integer"},
+        "title": {"type": "string"}
+      }
+    },
+    "optionValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "image_url", "option_name_id", "permalink", "position", "title"],
+      "properties": {
+        "id": {"type": "integer"},
+        "image_url": {"type": "null"},
+        "option_name_id": {"type": "integer"},
+        "permalink": {"type": ["string", "null"]},
+        "position": {"type": "integer"},
+        "title": {"type": "string"}
+      }
+    },
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accessories", "available", "bundle", "canonical_url_collection_id", "category_id",
+        "characteristics", "first_image", "gift_card", "id", "images", "is_adult", "list_card_mode",
+        "list_card_mode_with_variants", "option_names", "permalink", "price_kinds", "price_max",
+        "price_min", "properties", "reviews_average_rating_cached", "reviews_count_cached",
+        "sber_bnpl_price", "short_description", "title", "unit", "updated_at", "url", "variants",
+        "video_links"
+      ],
+      "properties": {
+        "accessories": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/accessory"}
+        },
+        "available": {"type": "boolean"},
+        "bundle": {"type": "null"},
+        "canonical_url_collection_id": {"type": "integer"},
+        "category_id": {"type": "integer"},
+        "characteristics": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/characteristic"}
+        },
+        "first_image": {"$ref": "#/definitions/productImage"},
+        "gift_card": {"type": "boolean"},
+        "id": {"type": "integer"},
+        "images": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/productImage"}
+        },
+        "is_adult": {"type": "boolean"},
+        "list_card_mode": {"type": "string"},
+        "list_card_mode_with_variants": {"type": "string"},
+        "option_names": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/optionName"}
+        },
+        "permalink": {"type": "string"},
+        "price_kinds": {"type": "array", "maxItems": 0},
+        "price_max": {"type": "string"},
+        "price_min": {"type": "string"},
         "properties": {
-          "id": {"type": "integer"},
-          "title": {"type": "string"},
-          "available": {"type": "boolean"},
-          "variants": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["id", "product_id", "available"],
-              "properties": {
-                "id": {"type": "integer"},
-                "product_id": {"type": "integer"},
-                "available": {"type": "boolean"},
-                "quantity": {"type": ["integer", "null"]}
-              }
-            }
-          }
+          "type": "array",
+          "items": {"$ref": "#/definitions/productProperty"}
+        },
+        "reviews_average_rating_cached": {"type": ["string", "null"]},
+        "reviews_count_cached": {"type": ["integer", "null"]},
+        "sber_bnpl_price": {"type": "integer"},
+        "short_description": {"type": ["string", "null"]},
+        "title": {"type": "string"},
+        "unit": {"type": "string"},
+        "updated_at": {"type": "string"},
+        "url": {"type": "string"},
+        "variants": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/productVariant"}
+        },
+        "video_links": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/videoLink"}
         }
+      }
+    },
+    "productImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compact_url", "created_at", "external_id", "filename", "has_bitmap_image", "id",
+        "image_content_type", "image_processing", "large_url", "medium_url", "original_url", "position",
+        "product_id", "small_url", "thumb_url", "title", "url"
+      ],
+      "properties": {
+        "compact_url": {"type": "string"},
+        "created_at": {"type": "string"},
+        "external_id": {"type": "null"},
+        "filename": {"type": "string"},
+        "has_bitmap_image": {"type": "boolean"},
+        "id": {"type": "integer"},
+        "image_content_type": {"type": "string"},
+        "image_processing": {"type": "boolean"},
+        "large_url": {"type": "string"},
+        "medium_url": {"type": "string"},
+        "original_url": {"type": "string"},
+        "position": {"type": "integer"},
+        "product_id": {"type": "integer"},
+        "small_url": {"type": "string"},
+        "thumb_url": {"type": "string"},
+        "title": {"type": "null"},
+        "url": {"type": "string"}
+      }
+    },
+    "productProperty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backoffice", "id", "is_hidden", "is_navigational", "permalink", "position", "title"],
+      "properties": {
+        "backoffice": {"type": "boolean"},
+        "id": {"type": "integer"},
+        "is_hidden": {"type": "boolean"},
+        "is_navigational": {"type": "boolean"},
+        "permalink": {"type": "string"},
+        "position": {"type": "integer"},
+        "title": {"type": "string"}
+      }
+    },
+    "productVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available", "barcode", "base_price", "created_at", "dimensions", "id", "image_id", "image_ids",
+        "old_price", "option_values", "ozon_link", "price", "prices", "product_id", "quantity",
+        "quantity_at_warehouse0", "sber_bnpl_price", "sku", "title", "updated_at",
+        "variant_field_values", "weight", "wildberries_link"
+      ],
+      "properties": {
+        "available": {"type": "boolean"},
+        "barcode": {"type": ["string", "null"]},
+        "base_price": {"type": "string"},
+        "created_at": {"type": "string"},
+        "dimensions": {"type": "null"},
+        "id": {"type": "integer"},
+        "image_id": {"type": ["integer", "null"]},
+        "image_ids": {
+          "type": "array",
+          "items": {"type": "integer"}
+        },
+        "old_price": {"type": ["string", "null"]},
+        "option_values": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/optionValue"}
+        },
+        "ozon_link": {"type": "null"},
+        "price": {"type": "string"},
+        "prices": {
+          "type": "array",
+          "items": {"type": "null"}
+        },
+        "product_id": {"type": "integer"},
+        "quantity": {"type": ["integer", "null"]},
+        "quantity_at_warehouse0": {"type": "string"},
+        "sber_bnpl_price": {"type": "integer"},
+        "sku": {"type": "string"},
+        "title": {"type": "string"},
+        "updated_at": {"type": "string"},
+        "variant_field_values": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/variantFieldValue"}
+        },
+        "weight": {"type": "null"},
+        "wildberries_link": {"type": "null"}
+      }
+    },
+    "variantFieldValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "value", "variant_field_id"],
+      "properties": {
+        "id": {"type": "integer"},
+        "value": {"type": "string"},
+        "variant_field_id": {"type": "integer"}
+      }
+    },
+    "videoLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["account_id", "created_at", "id", "product_id", "updated_at", "url"],
+      "properties": {
+        "account_id": {"type": "integer"},
+        "created_at": {"type": "string"},
+        "id": {"type": "integer"},
+        "product_id": {"type": "integer"},
+        "updated_at": {"type": "string"},
+        "url": {"type": "string"}
       }
     }
   }
