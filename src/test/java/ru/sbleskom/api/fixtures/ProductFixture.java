@@ -22,6 +22,6 @@ public class ProductFixture {
                 .filter(variant -> variant.quantity() != null && variant.quantity() > 0)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(
-                        "No in-stock product variant in collection: " + collectionSlug));
+                        "В коллекции нет доступных вариантов товара в наличии: " + collectionSlug));
     }
 }

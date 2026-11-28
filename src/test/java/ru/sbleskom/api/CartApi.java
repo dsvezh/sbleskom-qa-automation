@@ -81,7 +81,7 @@ public class CartApi {
 
     private String requireCsrfToken() {
         if (csrfToken == null || csrfToken.isBlank()) {
-            throw new IllegalStateException("Read the guest cart before modifying it to obtain a CSRF token");
+            throw new IllegalStateException("Перед изменением гостевой корзины запросите её содержимое, чтобы получить CSRF-токен");
         }
         return csrfToken;
     }
