@@ -73,7 +73,7 @@ class CartApiTest {
 
         try (CartFixture fixture = step("Открыть новую гостевую корзину", () -> new CartFixture(api.cart))) {
             step("Добавить выбранный вариант в корзину", () -> {
-                fixture.addItem(request);
+                api.cart.addItem(request);
             });
 
             CartResponseModel cart = step("Прочитать корзину в той же сессии", api.cart::getCartV2);
@@ -95,7 +95,7 @@ class CartApiTest {
 
         try (CartFixture fixture = step("Открыть новую гостевую корзину", () -> new CartFixture(api.cart))) {
             step("Добавить выбранный вариант и убедиться, что он появился в корзине", () -> {
-                CartResponseModel beforeDeletion = fixture.addItem(request);
+                CartResponseModel beforeDeletion = api.cart.addItem(request);
                 assertSingleItem(beforeDeletion, variant, request.quantity());
             });
 
